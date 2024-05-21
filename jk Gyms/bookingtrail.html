@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Class Booking</h1>
+    <div id="classes-container"></div>
+
+    <script>
+// Fetch classes from the database and display them
+document.addEventListener("DOMContentLoaded", function() {
+    fetch('get_classes.php')
+        .then(response => response.json())
+        .then(data => {
+            const classesContainer = document.getElementById('classes-container');
+            data.forEach(classItem => {
+                const button = document.createElement('button');
+                button.textContent = `${classItem.class_name} - ${classItem.class_time}`;
+                button.addEventListener('click', () => selectClass(classItem.class_id));
+                classesContainer.appendChild(button);
+            });
+        });
+});
+
+// Function to handle class selection
+function selectClass(classId) {
+    fetch('select_class.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ class_id: classId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Handle success, maybe update UI to reflect selection
+            console.log('Class selected successfully');
+        } else {
+            // Handle error
+            console.error('Failed to select class');
+        }
+    });
+}
+
+    </script>
+
+
+</body>
+
+</html>
